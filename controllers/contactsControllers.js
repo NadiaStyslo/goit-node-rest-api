@@ -1,18 +1,17 @@
-import contactsService from '../services/contactsServices.js';
-const contacts = require('../services/contactsServices.js');
+import {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+} from '../services/contactsServices.js';
+//const contacts = require('../services/contactsServices.js');
 
-export const getAllContacts =
-  ('/',
-  async (req, res, next) => {
-    const result = await contacts.listContacts();
-    res.json(result);
-  });
+export const getAllContacts = async (req, res, next) => {
+  const getListContacts = await listContacts();
+  res.json(getListContacts);
+};
 
-export const getOneContact =
-  ('/:contactId',
-  async (req, res, next) => {
-    const result = await contacts.getContactById();
-  });
+export const getOneContact = (req, res) => {};
 
 export const deleteContact = (req, res) => {};
 
