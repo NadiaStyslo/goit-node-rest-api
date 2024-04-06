@@ -26,7 +26,7 @@ export const getOneContact = async (req, res, next) => {
     }
     res.json(getOneId);
   } catch (error) {
-    naxt(error);
+    next(error);
   }
 };
 
@@ -35,7 +35,7 @@ export const deleteContact = async (req, res, next) => {
     const { id } = req.params;
     const deleteId = await removeContact(id);
     if (!deleteId) {
-      throw HttpError(404, 'Not Found');
+      throw HttpError(404, 'Naxt is not defined');
     }
     res.json(deleteId);
   } catch (error) {
