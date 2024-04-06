@@ -22,7 +22,7 @@ export const getOneContact = async (req, res, next) => {
     const { id } = req.params;
     const getOneId = await getContactById(id);
     if (!getOneId) {
-      throw HttpError(404, 'Naxt is not defined');
+      throw HttpError(404, 'Not found');
     }
     res.json(getOneId);
   } catch (error) {
