@@ -10,8 +10,8 @@ import contactsRouter from './routes/contactsRouter.js';
 const app = express();
 dotenv.config();
 
-const { DB_HOST } = process.env;
-// 'mongodb+srv://NStyslo:Anna8140216@cluster0.04fujrz.mongodb.net/db-contacts?retryWrites=true&w=majority&appName=Cluster0';
+const DB_HOST =
+  'mongodb+srv://NStyslo:Anna8140216@cluster0.04fujrz.mongodb.net/db-contacts?retryWrites=true&w=majority&appName=Cluster0';
 mongoose.set('strictQuery', true);
 mongoose
   .connect(DB_HOST)
