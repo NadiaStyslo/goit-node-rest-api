@@ -1,22 +1,21 @@
 import express, { query } from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-//import dotenv from 'dotenv';
-
+import dotenv from 'dotenv';
 import cors from 'cors';
-
 import contactsRouter from './routes/contactsRouter.js';
 
-const app = express();
-//dotenv.config();
+dotenv.config();
 
-const DB_HOST =
-  'mongodb+srv://NStyslo:Anna8140216@cluster0.04fujrz.mongodb.net/db-contacts?retryWrites=true&w=majority&appName=Cluster0';
+const app = express();
+
 mongoose.set('strictQuery', true);
 mongoose
-  .connect(DB_HOST)
+  .connect(process.env.DB_HOST)
   .then(() => {
-    app.listen(3000);
+    app.listen(3000, () => {
+      console.log('Database connection successful');
+    });
   })
   .catch((error) => {
     console.log(error.message);
