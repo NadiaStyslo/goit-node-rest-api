@@ -13,7 +13,7 @@ export const removeContact = async (contactId) => {
 
   return result;
 };
-export const addContact = async (data) => {
+export const addContact = (data) => {
   const contactAdd = Contact.create(data);
   return contactAdd;
 };
@@ -23,8 +23,8 @@ export const updateContactId = async (contactId, data) => {
   return updateId;
 };
 
-export const updateStatusContactId = async (contactId, data) => {
+export const updateStatusContactId = async (contactId, body) => {
   const { favorite } = body;
-  const updateStatus = Contact.findByIdAndUpdate(contactId, data, { favorite: true });
+  const updateStatus = await Contact.findByIdAndUpdate(contactId, { favorite }, { new: true });
   return updateStatus;
 };
