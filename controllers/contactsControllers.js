@@ -46,12 +46,12 @@ export const updateContact = ctrlWrapper(async (req, res, next) => {
   }
   res.status(201).json(result);
 });
-export const updateStatus = ctrlWrapper(async (req, res, next) => {
+export const updateStatus = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
   const result = await updateStatusContactId(id, { favorite });
   if (!result) {
-    throw HttpError(404, 'Not Found');
+    return res.status(404).json({ message: 'Not Found' });
   }
-  res.status(201).json(result);
+  return res.status(201).json(result);
 });

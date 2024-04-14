@@ -8,7 +8,7 @@ import {
   updateStatus,
 } from '../controllers/contactsControllers.js';
 import validateBody from '../helpers/validateBody.js';
-import { isValidId } from '../helpers/isValidid.js';
+import isValidId from '../helpers/isValidid.js';
 
 import {
   createContactSchema,
@@ -28,5 +28,10 @@ contactsRouter.post('/', validateBody(createContactSchema), createContact);
 
 contactsRouter.put('/:id', isValidId, validateBody(updateContactSchema), updateContact);
 
-contactsRouter.patch('/:id/favorite', isValidId, validateBody(updateStatusContact), updateStatus);
+contactsRouter.patch(
+  '/:id/favorite',
+  // isValidId,
+  validateBody(updateStatusContact),
+  updateStatus
+);
 export default contactsRouter;
