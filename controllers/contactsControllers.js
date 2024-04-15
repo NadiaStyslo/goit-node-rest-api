@@ -54,10 +54,10 @@ export const updateStatus = ctrlWrapper(async (req, res) => {
   const { favorite } = req.body;
   const result = await updateStatusContactId(id, { favorite });
   if (!result) {
-    return res.status(400).json({ message: 'Not Found' });
+    return res.status(404).json({ message: 'Not Found' });
   }
   if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({ error: 'Favorite must be filled' });
+    return res.status(404).json({ error: 'Favorite must be filled: true or false' });
   }
   return res.status(201).json(result);
 });
