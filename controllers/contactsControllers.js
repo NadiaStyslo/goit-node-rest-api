@@ -44,6 +44,9 @@ export const updateContact = ctrlWrapper(async (req, res, next) => {
   if (!result) {
     throw HttpError(404, 'Not Found');
   }
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: 'Body must have at least one field' });
+  }
   res.status(201).json(result);
 });
 export const updateStatus = ctrlWrapper(async (req, res) => {
@@ -51,7 +54,10 @@ export const updateStatus = ctrlWrapper(async (req, res) => {
   const { favorite } = req.body;
   const result = await updateStatusContactId(id, { favorite });
   if (!result) {
-    return res.status(404).json({ message: 'Not Found' });
+    return res.status(400).json({ message: 'Not Found' });
+  }
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: 'Favorite must be filled' });
   }
   return res.status(201).json(result);
 });
