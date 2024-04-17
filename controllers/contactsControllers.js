@@ -35,7 +35,7 @@ export const deleteContact = ctrlWrapper(async (req, res, next) => {
 export const createContact = ctrlWrapper(async (req, res) => {
   const newContact = await addContact(req.body);
   // if (!newContact) throw HttpError(400, 'Failed to create contact');
-  res.status(201).json(newContact);
+  res.status(200).json(newContact);
 });
 
 export const updateContact = ctrlWrapper(async (req, res, next) => {
@@ -47,7 +47,7 @@ export const updateContact = ctrlWrapper(async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: 'Body must have at least one field' });
   }
-  res.status(201).json(result);
+  res.status(200).json(result);
 });
 export const updateStatus = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
@@ -59,5 +59,5 @@ export const updateStatus = ctrlWrapper(async (req, res) => {
   if (Object.keys(req.body).length === 0) {
     return res.status(404).json({ error: 'Favorite must be filled: true or false' });
   }
-  return res.status(201).json(result);
+  return res.status(200).json(result);
 });
