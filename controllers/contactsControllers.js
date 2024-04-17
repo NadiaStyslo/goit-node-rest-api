@@ -34,7 +34,7 @@ export const deleteContact = ctrlWrapper(async (req, res, next) => {
 
 export const createContact = ctrlWrapper(async (req, res) => {
   const newContact = await addContact(req.body);
-  // if (!newContact) throw HttpError(400, 'Failed to create contact');
+  if (!newContact) throw HttpError(400, 'Failed to create contact');
   res.status(200).json(newContact);
 });
 
