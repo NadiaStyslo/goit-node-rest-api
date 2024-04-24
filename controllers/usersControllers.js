@@ -20,7 +20,9 @@ export const createNewUser = ctrlWrapper(async (req, res) => {
   const newUser = await User.create({ ...req.body, password: hashPassword });
 
   res.status(201).json({
-    email: newUser.email,
+    user: {
+      email: newUser.email,
+    },
   });
 });
 
@@ -45,5 +47,23 @@ export const createLogin = ctrlWrapper(async (req, res) => {
 
   res.json({
     token,
+    user: {
+      email: user.email,
+    },
   });
 });
+async function check(userId) {
+  try {
+    const user = await User.findById(userId);
+
+    const token = user.token;
+    if (token) {
+      console.log('token:', token);
+    } else {
+      console.log('error');
+    }
+  } catch (error) {
+    console.error('error', error);
+  }
+}
+check('6627c13cb8d4ae37fa1ffb76');
