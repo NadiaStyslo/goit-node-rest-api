@@ -9,7 +9,7 @@ import {
 } from '../controllers/contactsControllers.js';
 import validateBody from '../helpers/validateBody.js';
 import { isValidId } from '../helpers/isValidid.js';
-import { authenticate } from '../helpers/authenticate.js';
+import authenticate from '../helpers/authenticate.js';
 import {
   createContactSchema,
   updateContactSchema,

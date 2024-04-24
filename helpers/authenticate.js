@@ -1,12 +1,14 @@
 import HttpError from './HttpError.js';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/users.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const { SECRET_KEY } = process.env;
-export const authenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const { authorization = '' } = req.headers;
   if (!authorization) {
-    return next(HttpError(401, 'Authoriztion header not found'));
+    next(HttpError(401, 'Authoriztion header not found'));
   }
 
   const [bearer, token] = authorization.split(' ');
@@ -28,3 +30,5 @@ export const authenticate = async (req, res, next) => {
     next(HttpError(401));
   }
 };
+
+export default authenticate;

@@ -25,12 +25,15 @@ export const createNewUser = ctrlWrapper(async (req, res) => {
 });
 
 export const createLogin = ctrlWrapper(async (req, res) => {
+  // console.log('Inside createLogin function');
   const { email, password } = req.body;
+
   const user = await User.findOne({ email });
   if (!user) {
     throw HttpError(401, 'Email or password invalid');
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
+
   if (!passwordCompare) {
     throw HttpError(401, 'Email or password invalid');
   }
@@ -38,6 +41,8 @@ export const createLogin = ctrlWrapper(async (req, res) => {
     id: user._id,
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
+  await User.findByIdAndUpdate(user._id, { token });
+
   res.json({
     token,
   });
