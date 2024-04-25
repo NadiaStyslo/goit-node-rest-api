@@ -10,7 +10,11 @@ import HttpError from '../helpers/HttpError.js';
 import { ctrlWrapper } from '../helpers/ctrlWrapper.js';
 
 export const getAllContacts = ctrlWrapper(async (req, res, next) => {
-  const getListContacts = await listContacts();
+  const { _id: owner } = req.user;
+  const { page, limit } = req.query;
+  // console.log(req.query);
+  const skip = (page - 1) * limit;
+  const getListContacts = await listContacts({ owner }, { skip, limit });
   res.status(200).json(getListContacts);
 });
 
@@ -33,7 +37,8 @@ export const deleteContact = ctrlWrapper(async (req, res, next) => {
 });
 
 export const createContact = ctrlWrapper(async (req, res) => {
-  const newContact = await addContact(req.body);
+  const { _id: owner } = req.user;
+  const newContact = await addContact({ ...req.body, owner });
   if (!newContact) throw HttpError(400, 'Failed to create contact');
   res.status(200).json(newContact);
 });

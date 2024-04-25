@@ -22,6 +22,7 @@ export const createNewUser = ctrlWrapper(async (req, res) => {
   res.status(201).json({
     user: {
       email: newUser.email,
+      subscription: newUser.subscription,
     },
   });
 });
@@ -49,21 +50,27 @@ export const createLogin = ctrlWrapper(async (req, res) => {
     token,
     user: {
       email: user.email,
+      subscription: user.subscription,
     },
   });
 });
-async function check(userId) {
-  try {
-    const user = await User.findById(userId);
 
-    const token = user.token;
-    if (token) {
-      console.log('token:', token);
-    } else {
-      console.log('error');
-    }
-  } catch (error) {
-    console.error('error', error);
-  }
-}
-check('6627c13cb8d4ae37fa1ffb76');
+export const createCurrent = ctrlWrapper(async (req, res) => {
+  const { email, subscription } = req.user;
+  const user = await User.findOne({ email });
+  if (!user) throw HttpError(401, 'Not authorized');
+  res.json({
+    email,
+    subscription,
+  });
+});
+
+export const createLogout = ctrlWrapper(async (req, res) => {
+  const { _id } = req.user;
+  const user = await User.findByIdAndUpdate(_id, { token: '' });
+
+  if (!user) throw HttpError(401, 'Not authorized');
+  res.json({
+    message: 'Logout success',
+  });
+});
