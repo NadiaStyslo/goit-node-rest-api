@@ -8,21 +8,21 @@ const { SECRET_KEY } = process.env;
 const authenticate = async (req, res, next) => {
   const { authorization = '' } = req.headers;
   if (!authorization) {
-    next(HttpError(401, 'Authoriztion header not found'));
+    return next(HttpError(401, 'Authoriztion header not found'));
   }
 
   const [bearer, token] = authorization.split(' ');
   if (bearer !== 'Bearer') {
-    next(HttpError(401));
+    return next(HttpError(401));
   }
   try {
     const { id } = jwt.verify(token, SECRET_KEY);
     const user = await User.findById(id);
     if (!user) {
-      next(HttpError(401, 'User not found'));
+      return next(HttpError(401, 'User not found'));
     }
     if (!user.token) {
-      next(HttpError(401, 'Token invalid'));
+      return next(HttpError(401, 'Token invalid'));
     }
     req.user = user;
     next();
