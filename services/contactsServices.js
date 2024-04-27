@@ -5,11 +5,11 @@ export const listContacts = async (owner) => {
   return data;
 };
 export const getContactById = async (contactId) => {
-  const result = Contact.findById(contactId);
+  const result = Contact.findOne(contactId);
   return result || null;
 };
 export const removeContact = async (contactId) => {
-  const result = Contact.findByIdAndDelete(contactId);
+  const result = Contact.findOneAndDelete(contactId);
 
   return result;
 };
@@ -19,12 +19,12 @@ export const addContact = (data) => {
 };
 
 export const updateContactId = async (contactId, data) => {
-  const updateId = Contact.findByIdAndUpdate(contactId, data, { new: true });
+  const updateId = Contact.findOneAndUpdate(contactId, data, { new: true });
   return updateId;
 };
 
 export const updateStatusContactId = async (contactId, body) => {
   const { favorite } = body;
-  const updateStatus = await Contact.findByIdAndUpdate(contactId, { favorite }, { new: true });
+  const updateStatus = await Contact.findOneAndUpdate(contactId, { favorite }, { new: true });
   return updateStatus;
 };
