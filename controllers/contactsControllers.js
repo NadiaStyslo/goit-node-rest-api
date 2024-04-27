@@ -19,17 +19,22 @@ export const getAllContacts = ctrlWrapper(async (req, res, next) => {
 });
 
 export const getOneContact = ctrlWrapper(async (req, res, next) => {
+  const { _id: owner } = req.user;
   const { id } = req.params;
-  const getOneId = await getContactById(id);
+  const getOneId = await getContactById({ owner, _id: id });
   if (!getOneId) {
     throw HttpError(404, 'Not found');
+  }
+  if (getOneId.owner.toString() !== req.user._id.toString()) {
+    throw HttpError(403, 'Access forbidden');
   }
   res.json(getOneId);
 });
 
 export const deleteContact = ctrlWrapper(async (req, res, next) => {
+  const { _id: owner } = req.user;
   const { id } = req.params;
-  const deleteId = await removeContact(id);
+  const deleteId = await removeContact({ owner, _id: id });
   if (!deleteId) {
     throw HttpError(404, 'Not Found');
   }
@@ -44,15 +49,16 @@ export const createContact = ctrlWrapper(async (req, res) => {
 });
 
 export const updateContact = ctrlWrapper(async (req, res, next) => {
+  const { _id: owner } = req.user;
   const { id } = req.params;
-  const result = await updateContactId(id, req.body);
+  const result = await updateContactId({ owner, _id: id }, req.body);
   if (!result) {
     throw HttpError(404, 'Not Found');
   }
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: 'Body must have at least one field' });
   }
-  res.status(200).json(result);
+  res.status(201).json(result);
 });
 export const updateStatus = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
