@@ -89,11 +89,13 @@ export const createLogout = ctrlWrapper(async (req, res) => {
 export const createAvatar = ctrlWrapper(async (req, res) => {
   if (!req.user) throw HttpError(401, 'Not authorized');
   const { _id } = req.user;
+
   const { path: tempUpload, originalname } = req.file;
   const filename = `${_id}_${originalname}`;
 
   const resultUpload = path.join(avatarDir, filename);
   await fs.rename(tempUpload, resultUpload);
+
   const sizeImage = await Jimp.read(resultUpload);
   await sizeImage.resize(250, 250).writeAsync(resultUpload);
   const avatarURL = path.join('avatars', filename);
