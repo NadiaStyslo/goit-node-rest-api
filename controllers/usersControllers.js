@@ -8,9 +8,14 @@ import dotenv from 'dotenv';
 import gravatar from 'gravatar';
 import { raw } from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import Jimp from 'jimp';
 
-const avatarDir = path.resolve('public', 'avatars');
+// const avatarDir = path.resolve('public', 'avatars');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const avatarDir = path.join(__dirname, '../', 'public', 'avatars');
 
 dotenv.config();
 const { SECRET_KEY } = process.env;
@@ -82,7 +87,17 @@ export const createLogout = ctrlWrapper(async (req, res) => {
 });
 
 export const createAvatar = ctrlWrapper(async (req, res) => {
+  if (!req.user) throw HttpError(401, 'Not authorized');
+  const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
-  const resultUpload = path.join(avatarDir, originalname);
+  const filename = `${_id}_${originalname}`;
+
+  const resultUpload = path.join(avatarDir, filename);
   await fs.rename(tempUpload, resultUpload);
+  const sizeImage = await Jimp.read(resultUpload);
+  await sizeImage.resize(250, 250).writeAsync(resultUpload);
+  const avatarURL = path.join('avatars', filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.status(200).json({ avatarURL });
 });
