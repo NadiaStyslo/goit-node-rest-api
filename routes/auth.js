@@ -12,6 +12,7 @@ import authenticate from '../helpers/authenticate.js';
 import { upload } from '../helpers/upload.js';
 
 const authRouter = express.Router();
+
 authRouter.post('/register', validateBody(userRegisterSchema), createNewUser);
 authRouter.post('/login', validateBody(userLoginInSchema), createLogin);
 authRouter.get('/current', authenticate, createCurrent);
