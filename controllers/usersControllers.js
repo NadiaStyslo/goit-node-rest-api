@@ -2,6 +2,7 @@
 import { User } from '../models/users.js';
 import HttpError from '../helpers/HttpError.js';
 import { ctrlWrapper } from '../helpers/ctrlWrapper.js';
+import { sendEmail } from '../helpers/sendEmail.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -11,6 +12,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import Jimp from 'jimp';
+import { nanoid } from 'nanoid';
 
 // const avatarDir = path.resolve('public', 'avatars');
 const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +20,7 @@ const __dirname = path.dirname(__filename);
 const avatarDir = path.join(__dirname, '../', 'public', 'avatars');
 
 dotenv.config();
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, MAILTRAP_HOST } = process.env;
 
 export const createNewUser = ctrlWrapper(async (req, res) => {
   const { email, password } = req.body;
@@ -29,8 +31,20 @@ export const createNewUser = ctrlWrapper(async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
+  const verificationToken = nanoid();
 
-  const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+    verificationToken,
+  });
+  const verifyEmail = {
+    to: email,
+    subject: 'Verify email',
+    html: `<a target ="_blank" href ="${MAILTRAP_HOST}/users/verify/${verificationToken}</a>`,
+  };
+  await sendEmail(verifyEmail);
 
   res.status(201).json({
     user: {

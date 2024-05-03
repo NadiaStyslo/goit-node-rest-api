@@ -3,4 +3,6 @@ node_modules/
 .idea
 .vscode
 
-.env
+.envsendgrid.env
+sendgrid.env
+sendgrid.env
