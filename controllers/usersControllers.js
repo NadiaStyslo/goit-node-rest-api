@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import Jimp from 'jimp';
 import { nanoid } from 'nanoid';
+import { verify } from 'crypto';
 
 // const avatarDir = path.resolve('public', 'avatars');
 const __filename = fileURLToPath(import.meta.url);
@@ -20,8 +21,8 @@ const __dirname = path.dirname(__filename);
 const avatarDir = path.join(__dirname, '../', 'public', 'avatars');
 
 dotenv.config();
-const { SECRET_KEY, MAILTRAP_HOST } = process.env;
-
+const { SECRET_KEY, MAILTRAP_HOST, BASE_URL } = process.env;
+console.log(BASE_URL);
 export const createNewUser = ctrlWrapper(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -42,15 +43,45 @@ export const createNewUser = ctrlWrapper(async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: 'Verify email',
-    html: `<a target ="_blank" href ="${MAILTRAP_HOST}/users/verify/${verificationToken}</a>`,
+    html: `<a target ="_blank" href ="${BASE_URL}/users/verify/${verificationToken}">Click verify your email</a>`,
   };
-  await sendEmail(verifyEmail);
 
+  await sendEmail(verifyEmail);
   res.status(201).json({
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
     },
+  });
+});
+
+export const verifyEmail = ctrlWrapper(async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await User.findOne({ verificationToken });
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+  await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
+  res.status(200).json({ message: 'Verification successful' });
+});
+
+export const resedVarifyEmail = ctrlWrapper(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw HttpError(400, 'Missing required field email');
+  }
+  if (user.verify) {
+    throw HttpError(400, 'Verification has already been passed');
+  }
+  const verifyEmail = {
+    to: email,
+    subject: 'Verify email',
+    html: `<a target ="_blank" href ="${BASE_URL}/users/verify/${user.verificationToken}">Click verify your email</a>`,
+  };
+  await sendEmail(verifyEmail);
+  res.status(200).json({
+    message: 'Verify email send success',
   });
 });
 
@@ -61,6 +92,9 @@ export const createLogin = ctrlWrapper(async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw HttpError(401, 'Email or password invalid');
+  }
+  if (!user.verify) {
+    throw HttpError(401, 'Email not verify');
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
 

@@ -1,17 +1,18 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
+import { configDotenv } from 'dotenv';
 
-const { MAILTRAP_PASS } = process.env;
-
+const mailtrap_pass = process.env.MAILTRAP_PASS;
+// console.log('pass', mailtrap_pass);
 const configEmail = {
   host: 'sandbox.smtp.mailtrap.io',
   port: 2525,
   auth: {
     user: '2ae41992198cff',
-    pass: MAILTRAP_PASS,
+    pass: mailtrap_pass,
   },
 };
-
+// console.log('email', configEmail);
 const transport = nodemailer.createTransport(configEmail);
 
 export const sendEmail = async (data) => {
